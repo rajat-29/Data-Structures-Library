@@ -7,7 +7,7 @@ public class Main
 {
 	public static void main(String[] args) 
 	{
-		Rajat.DS.SinglyLinkedList n = new SinglyLinkedList();
+		Rajat.DS.SinglyLinkedList<Integer> n = new SinglyLinkedList();
 
 		n.addFirst(1); 	
 		n.addFirst(2);

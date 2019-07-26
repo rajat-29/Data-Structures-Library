@@ -1,6 +1,6 @@
 package Rajat.DS;
 
-public class SinglyLinkedList 
+public class SinglyLinkedList<E> 
 {
   //---------------- nested Node class ----------------
   /**
@@ -9,13 +9,13 @@ public class SinglyLinkedList
    * is the last node).
    */
 
-  private static class Node 
+  private static class Node<E> 
   {
     /** The element stored at this node */
-    private int element;            // reference to the element stored at this node
+    private E element;            // reference to the element stored at this node
 
     /** A reference to the subsequent node in the list */
-    private Node next;         // reference to the subsequent node in the list
+    private Node<E> next;         // reference to the subsequent node in the list
 
     /**
      * Creates a node with the given element and next node.
@@ -23,7 +23,7 @@ public class SinglyLinkedList
      * @param e  the element to be stored
      * @param n  reference to a node that should follow the new node
      */
-    public Node(int e, Node n) 
+    public Node(E e, Node<E> n) 
     {
         
         element = e;
@@ -35,7 +35,7 @@ public class SinglyLinkedList
      * Returns the element stored at the node.
      * @return the element stored at the node
      */
-    public int getElement() 
+    public E getElement() 
     { 
         return element;
     }
@@ -44,7 +44,7 @@ public class SinglyLinkedList
      * Returns the node that follows this one (or null if no such node).
      * @return the following node
      */
-    public Node getNext() 
+    public Node<E> getNext() 
     { 
       if(next!=null)
       {
@@ -61,7 +61,7 @@ public class SinglyLinkedList
      * Sets the node's next reference to point to Node n.
      * @param n    the node that should follow this one
      */
-    public void setNext(Node n) 
+    public void setNext(Node<E> n) 
     { 
       next = n;
     }
@@ -71,10 +71,10 @@ public class SinglyLinkedList
   // instance variables of the SinglyLinkedList
   /** The head node of the list */
 
-  private Node head = null;               // head node of the list (or null if empty)
+  private Node<E> head = null;               // head node of the list (or null if empty)
 
   /** The last node of the list */
-  private Node tail = null;               // last node of the list (or null if empty)
+  private Node<E> tail = null;               // last node of the list (or null if empty)
 
 
   /** Number of nodes in the list */
@@ -85,10 +85,6 @@ public class SinglyLinkedList
   public SinglyLinkedList() 
   {
     // constructs an initially empty list
-
-    head = null;
-    tail = null;
-    size = 0;
   }              
 
 
@@ -123,34 +119,28 @@ public class SinglyLinkedList
    * Returns (but does not remove) the first element of the list
    * @return element at the front of the list (or null if empty)
    */
-  public int first()
+  public E first()
   {
    // returns (but does not remove) the first element
-    if(head != null)
-    {
+      if(isEmpty())
+      {
+        return null;
+      }
       return head.getElement();
-    }
-    else 
-    {
-      return -1;
-    }
   }
 
   /**
    * Returns (but does not remove) the last element of the list.
    * @return element at the end of the list (or null if empty)
    */
-  public int last() 
+  public E last() 
   {              
    // returns (but does not remove) the last element
-    if(head != null)
-    {
+     if(isEmpty())
+      {
+        return null;
+      }
       return tail.getElement();
-    }
-    else
-    {
-      return -1;
-    }
   }
 
   // update methods
@@ -158,57 +148,47 @@ public class SinglyLinkedList
    * Adds an element to the front of the list.
    * @param e  the new element to add
    */
-  public void addFirst(int e) 
+  public void addFirst(E e) 
   {             
     // adds element e to the front of the list
-    Node newNode = new Node(e,null);
+    head = new Node<>(e, head);              // create and link a new node
+    if (size == 0)
+      tail = head;                           // special case: new node becomes tail also
     size++;
-
-    if(head == null)
-    {
-      head = newNode;
-      tail = newNode;
-    }
-    else
-    {
-      newNode.setNext(head);
-      head = newNode;
-    }
   }
 
   /**
    * Adds an element to the end of the list.
    * @param e  the new element to add
    */
-  public void addLast(int e) 
+  public void addLast(E e) 
   {                 
      // adds element e to the end of the list
-    Node newNode = new Node(e,null);
-    size++;
-
-    if(head == null)
-    {
-      head = newNode;
-      tail = newNode;
-    }
+   Node<E> newest = new Node<>(e, null);    // node will eventually be the tail
+    if (isEmpty())
+      head = newest;                         // special case: previously empty list
     else
-    {
-      tail.setNext(head);
-      tail = newNode;
-    }
-  
+      tail.setNext(newest);                  // new node after existing tail
+    tail = newest;                           // new node becomes the tail
+    size++;
   }
 
   /**
    * Removes and returns the first element of the list.
    * @return the removed element (or null if empty)
    */
-  public int removeFirst() 
+  public E removeFirst() 
   {                  
    // removes and returns the first element
-    int el = head.getElement();
+    if (isEmpty())
+    { 
+      return null; 
+    } 
+    E el = head.getElement();
     head = head.getNext();
     size--;
+    if (size == 0)
+      tail = null;  
     return el;
   }
 
@@ -218,25 +198,16 @@ public class SinglyLinkedList
    */
   public String toString() 
   {
-    StringBuilder sb = new StringBuilder();
-
-    Node temp = head;
-
-    sb.append("{");
-    for(int i=0;i<size;i++)
-    {
-      if(i!=0)
-      {
-        sb.append("," + temp.getElement());
-      }
-      else
-      {
-        sb.append(temp.getElement());
-      }
-     temp = temp.getNext();
+    StringBuilder sb = new StringBuilder("(");
+    Node<E> walk = head;
+    while (walk != null) {
+      sb.append(walk.getElement());
+      if (walk != tail)
+        sb.append(", ");
+      walk = walk.getNext();
     }
-     sb.append("}");
-     return sb.toString();
+    sb.append(")");
+    return sb.toString();
   }
 
 }
