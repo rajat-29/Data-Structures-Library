@@ -136,12 +136,7 @@ public class DoublyLinkedList<E>
    */
   public void addFirst(E e) 
   {
-    header = new Node<>(e,null,header);
-    if(size == 0)
-    {
-      trailer = header;
-    }
-    size++;
+    addBetween(e,null,header);
   }
 
   /**
@@ -150,17 +145,7 @@ public class DoublyLinkedList<E>
    */
   public void addLast(E e) 
   {
-    Node<E> newNode = new Node<>(e,trailer,null)
-    if(isEmpty())
-    {
-      header = newNode;
-    }
-    else
-    {
-      trailer.setNext(newNode);
-    }
-    trailer = newNode;
-    size++;
+    addBetween(e,trailer,null);
   }
 
   /**
@@ -169,23 +154,7 @@ public class DoublyLinkedList<E>
    */
   public E removeFirst() 
   {
-    if(isEmpty())
-    {
-      return null;
-    }
-    E answer = header.getElement();
-    if(size == 1)
-    {
-      header = header.getNext();
-      trailer = null;
-    }
-    else
-    {
-      header = header.getNext();
-      header.setPrev(null);
-    }
-    size--;
-    return answer;
+    return remove(header);
   }
 
   /**
@@ -194,24 +163,7 @@ public class DoublyLinkedList<E>
    */
   public E removeLast() 
   {
-    if(isEmpty())
-    {
-      return null;
-    }
-    E answerlast = trailer.getElement();
-    if(size == 1)
-    {
-      trailer = trailer.getPrev();
-      header = null;
-    }
-    else
-    {
-      trailer = trailer.getPrev();
-      trailer.setNext(null);
-    }
-    size--;
-    return answerlast;
-
+    return remove(trailer);
   }
 
   // private update methods
@@ -225,13 +177,16 @@ public class DoublyLinkedList<E>
    */
   private void addBetween(E e, Node<E> predecessor, Node<E> successor) 
   {
-    Node<E> newNode = new Node<>(e,predecessor,successor);
-    if(predecessor.getNext()==successor)
-    {
-      predecessor.setNext(newNode);
-      successor.setPrev(newNode);
-      size++;
-    }
+     Node<E> ptr=new Node<>(e,predecessor,successor);
+    if(predecessor!=null)
+      predecessor.setNext(ptr);
+    else
+      header=ptr;
+    if(successor!=null)
+      successor.setPrev(ptr);
+    else
+      trailer=ptr;
+    size++;
   }
 
   /**
@@ -240,38 +195,18 @@ public class DoublyLinkedList<E>
    */
   private E remove(Node<E> node) 
   {
-    if(header == node) 
-    {
-      E answer1 = header.getElement();
-      header = header.getNext();
-      header.setPrev(null);
-      size--;
-      trailer = null;
-    }
-    else if(trailer == node)
-    {
-      E answerlast = trailer.getElement();
-      if(size == 1)
-      {
-        trailer = trailer.getPrev();
-        header = null;
-      }
+     Node<E> tempNode = node.getPrev();
+      if(tempNode!=null)
+        tempNode.setNext(node.getNext());
       else
-      {
-        trailer = trailer.getPrev();
-        trailer.setNext(null);
-      }
+        header=node.getNext();
+      tempNode=node.getNext();
+      if(tempNode!=null)
+      tempNode.setPrev(node.getPrev());
+      else
+        trailer=node.getPrev();
       size--;
-      return answerlast;
-    }
-    else
-    {
-      E answer3 = node.getElement();
-      node.getPrev().setNext(node.getNext());
-      node.getNext().setPrev(node.getPrev());
-      size--;
-      return answer3
-    }
+    return node.getElement();
   }
 
   /**
